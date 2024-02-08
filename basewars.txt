@@ -1,0 +1,17 @@
+"basewars"
+{
+	"author_name"	"Lukas hines"
+	"author_email"	"johndoe@example.com"
+	"author_url" 	"http://www.example.com"
+	"version"    	"0"
+	
+	"title"		"BaseWars"
+	"description"	"Make a base. illegally gain money. start wars on other bases."
+	"category"	"rp"
+	"base"		"sandbox"
+
+	"maps"		"^rp_|^bw_"
+	"hidegamemode"	"0"
+	"menusystem"	"1"
+	"selectable"	"1"
+}
