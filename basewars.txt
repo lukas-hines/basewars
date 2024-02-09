@@ -5,12 +5,12 @@
 	"author_url" 	"http://www.example.com"
 	"version"    	"0"
 	
-	"title"		"BaseWars"
-	"description"	"Make a base. illegally gain money. start wars on other bases."
-	"category"	"rp"
-	"base"		"sandbox"
+	"title"			"BaseWars"
+	"description"	"Basewars is a role-playing mutiplayer game mode for Garry's Mod where players must make a base, gain money, and attack other bases. This game mode is currently a work in progress."
+	"category"		"rp"
+	"base"			"sandbox"
 
-	"maps"		"^rp_|^bw_"
+	"maps"			"^rp_|^bw_"
 	"hidegamemode"	"0"
 	"menusystem"	"1"
 	"selectable"	"1"
