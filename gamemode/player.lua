@@ -13,27 +13,24 @@ function plyClass.new(ply, moneyData, lvlData, prestigeData)
     local self = setmetatable({}, plyClass)
     self.ply = ply
     self.Money = Money.new(moneyData.money)
-    self.Level = Level.new(lvlData.level, lvlData.xp )
+    self.Level = Level.new(lvlData.level, lvlData.xp)
     self.Prestige = Prestige.new(prestigeData)
     --self.InventorySys = Inventory.new()
 
     return self
 end
 
---raw methods do not apply boosts
 
-function plyClass:SpendMoney(amount, callBack)
-    self.Money:SpendMoney(amount / self.PrestigeSys:GetMoneyReduction(), callBack)
+function plyClass:SpendMoney(amount, success, fail)
+    self.Money:SpendMoney(amount / self.PrestigeSys:GetMoneyReduction(), success, fail)
+end
+function plyClass:SpendMoneyRaw(amount, success, fail)
+    self.Money:SpendMoney(amount, success, fail)
 end
 
 function plyClass:AddMoney(amount)
     self.Money:AddMoney(amount * self.Prestige:GetMoneyBoost())
 end
-
-function plyClass:SpendMoneyRaw(amount, callBack)
-    self.Money:SpendMoney(amount, callBack)
-end
-
 function plyClass:AddMoneyRaw(amount)
     self.Money:AddMoney(ammount)
 end
@@ -45,7 +42,9 @@ end
 function plyClass:DropMoney(amount)
     --get position where you want to drop money.
     --ply wont work. fix this
-    self.Money:DropMoney(self.ply, ammount)
+    self.Money:DropMoney(self.ply, ammount, function()
+        
+    end)
 end
 
 function plyClass:GetMoneyAsString()
@@ -53,14 +52,14 @@ function plyClass:GetMoneyAsString()
 end
 
 function plyClass:GetMoney()
-    return self.Money:GetMoney(amount)
+    --do not use this for any logic. output use only!!!
+    return self.Money:GetMoney()
 end
 
 
 function plyClass:AddXp(amount)
     self.Level:AddXp(amount * self.Prestige:GetXpBoost())
 end
-
 function plyClass:AddXpRaw()
     self.Level:AddXp(amount)
 end

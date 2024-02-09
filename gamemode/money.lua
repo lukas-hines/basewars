@@ -3,38 +3,53 @@
 local Money = {}
 Money.__index = Money
 
-function Money:new(amount)
+function Money:new(money)
     local self = setmetatable({}, Money)
-    self.value = amount or 5000
+    self.money = amount or 5000
     return self
 end
 
-function Money:AddMoney(amount)
-    self.value = self.value + amount
-    self:formatMoney()
+function Money:SpendMoney(amount, success, fail)
+    if self.CanAfford(amount) then
+        self.money = self.money - amount
+        success()
+    else
+        fail()
+    end
 end
 
-function Money:SetAmount(amount)
-    self.value = amount
-    self:formatMoney()
-    print("i have " .. self.value .. " or ".. self.valueStr)
+function Money:AddMoney(amount)
+    --prob want to check max number so i dont overflow..
+    self.money = self.money + amount
 end
 
 function Money:RemoveMoney(amount)
-    if amount > self.value then
-        error("Not enough money to remove.")
+    if amount > self.money then
+        print("[BW] Not enough money to remove.")
+        --should i just dump there account?
         return
+    else
+        self.money = self.money - amount
     end
-    self.value = self.value - amount
-    self:formatMoney()
+end
+
+function Money:DropMoney(pos, amount, fail)
+    if self.CanAfford(amount) then
+    --sanitise the position. maybe have a lib for that stuff.
+    --drop money at position passed
+    elseif fail then
+        print("[BW] could not afford to drop money")
+        print(debug.traceback())
+        fail()
+    end
 end
 
 function Money:CanAfford(amount)
-    return self.value >= amount
+    return self.money >= amount
 end
 
-function Money:GetMoneyString()
-    local num = self.value
+function Money:GetMoneyAsString()
+    local num = self.money
     local units = {[10^18] = "Quintillion", [10^15] = "Quadrillion", [10^12] = "Trillion", [10^9] = "Billion", [10^6] = "Million"}
 
     local absNum = math.abs(num)
@@ -47,11 +62,11 @@ function Money:GetMoneyString()
 end
 
 function Money:GetMoney()
-    return self.value
+    return self.money
 end
 
-function Money:SetMoney(num)
-    self.value = num
+function Money:SetMoney(value)
+    self.money = value
 end
 
 return Money
