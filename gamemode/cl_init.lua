@@ -1,4 +1,4 @@
---lost to drive fail
+include( "shared.lua" )
 
 --clean the defult ui
 --load in basic hud
