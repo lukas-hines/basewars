@@ -8,7 +8,6 @@ local playerInsts = {}
 
 local function createPlayerInstance(ply)
     if not IsValid(ply) or playerInsts[ply] then return end
-    print(ply:SteamID64())
     PlayerRepo.LoadPlayerData(ply, 
         function(LoadedPlayer)
             LoadedPlayer.ply = ply
@@ -18,17 +17,19 @@ end
 
 --make a save to database in playerRepo
 local function removePlayerInstance(ply)
-    --should protect me from a race condition?
     local data = playerInsts[ply]
-    playerInsts[ply] = nil
     PlyRepo.SavePlayerData(data)
+
+    playerInsts[ply] = nil
 end
 
 local function saveAllData(callBack)
     print("[BW] saving all data")
     for ply, playerInst in pairs(playerInsts) do
         if playerInsts[#playerInsts] == playerInst then
-            PlyRepo.SavePlayerData(playerInst, callBack)
+            PlyRepo.SavePlayerData(playerInst, function()
+                print("[BW] all player data hase been saved.")
+            end)
         else
             PlyRepo.SavePlayerData()
         end

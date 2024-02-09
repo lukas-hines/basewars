@@ -37,52 +37,44 @@ if not PlayerRepoSingleton then
     end
 
     --fix the database so money, levels, prestige, inventory, etc are all in subtables in the db
-    function PlayerRepo.LoadPlayerData(ply, callback)
-        if not callback then
-            print("[BW] You must have a call back for LoadPlayerData()!")
-        end
-
+    function PlayerRepo.LoadPlayerData(ply, success, fail)
         local queryStr = string.format("SELECT * FROM player WHERE id = '%s';", ply:SteamID64())
         local query = PlayerRepo.db:query(queryStr)
-        print("[BW] loading Player data for SteamID: " .. ply:SteamID64())
+        print("[BW] loading Player data for ".. ply:Nick() .." SteamID: " .. ply:SteamID64())
 
         function query:onSuccess(data)
             if #data > 0 then
                 local pData = data[1]
-                --                          ply, moneyData, lvlData, prestigeData
-                local newPly = PlyClass.new(ply, pData, pData, pData)
-                    callback(newPly)
+                local plyInst = PlyClass.new(ply, pData, pData, pData)
+                if success then success(plyInst) end
             else
-                print("[BW] Creating Player data for ".. ply:Nick() .." SteamID: " .. ply:SteamID64())
-                callback(PlyClass.new(ply, {}, {}, {}))
+                print("[BW] Creating new Player data for ".. ply:Nick() .." SteamID: " .. ply:SteamID64())
+                if success then success(PlyClass.new(ply, {}, {}, {})) end
             end
         end
     
         function query:onError(err)
             print("[BW] failed to load Player data for ".. ply:Nick() .."! SteamID: " .. ply:SteamID64() .." Error:", err)
-            --disableSaving()
-            callback(PlyClass.new())
+            --do something to disable saving
+            if fail then fail(PlyClass.new()) end
         end
     
         query:start()
     end
 
-    --make this do stuff
-    function PlayerRepo.SavePlayerData(ply, callBack)
-        local queryStr = string.format("UPDATE ply SET money = '%s' WHERE id = '%s';" , ply.ply:GetMoney() , ply.ply:SteamID64())
+    --querystring needs to update feilds
+    function PlayerRepo.SavePlayerData(plyInst, success, fail)
+        local queryStr = string.format("UPDATE ply SET money = '%s' WHERE id = '%s';" , plyInst:GetMoney() , plyInst.ply:SteamID64())
         local query = PlayerRepo.db:query(queryStr)
-        print("test")
+        print("[BW] Saving Player data for ".. plyInst.ply:Nick() .." SteamID: " .. plyInst.ply:SteamID64())
+
         function query:onSuccess()
-            if callBack then
-                callBack()
-            end
+            if success then success() end
         end
     
         function query:onError(err)
-            if callBack then
-                print("[BW] failed to save player data for ".. ply.ply:Nick() .."! SteamID: " .. ply.ply:SteamID64() .." Error:", err)
-                callBack()
-            end
+            print("[BW] failed to save player data for ".. plyInst.ply:Nick() .."! SteamID: " .. plyInst.ply:SteamID64() .." Error:", err)
+            if fail then fail() end
         end
 
         query:start()
