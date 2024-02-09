@@ -5,16 +5,20 @@ Money.__index = Money
 
 function Money:new(money)
     local self = setmetatable({}, Money)
-    self.money = amount or 5000
+    self.money = money or 5000
     return self
+end
+
+function Money:CanAfford(amount)
+    return self.money >= amount
 end
 
 function Money:SpendMoney(amount, success, fail)
     if self.CanAfford(amount) then
         self.money = self.money - amount
-        success()
+        if success then success() end
     else
-        fail()
+        if fail then fail() end
     end
 end
 
@@ -42,10 +46,6 @@ function Money:DropMoney(pos, amount, fail)
         print(debug.traceback())
         fail()
     end
-end
-
-function Money:CanAfford(amount)
-    return self.money >= amount
 end
 
 function Money:GetMoneyAsString()
