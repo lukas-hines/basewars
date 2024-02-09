@@ -16,16 +16,14 @@ To install the Basewars game mode:
 6. Restart Garry's Mod and select "Basewars" from the game modes menu.
 7. Start a game and run the `bw_first_time_setup` in the console.
 
-## About
-
-Players must build a base and gather as much money as posible. Raiding people will reward you and unlock new things to help improve your base!
 
 ## Usage
 
-every admin console comand is prefixed with bw_*
-```
-bw_prep_shutdown : This saves all player data and gets you prepaired for a server shutdown, do to limitations you would have to still manualy shut down the server.
-```
+every console command is prefixed with "bw_". 
+
+### Admin commands
+- bw_prep_shutdown : This saves all player data and gets you prepaired for a server shutdown, do to limitations you would have to still manualy shut down the server.
+
 
 ## Features and Roadmap
 
