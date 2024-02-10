@@ -1,6 +1,7 @@
 local Money = include("money.lua")
 local Level = include("level.lua")
 local Prestige = include("prestige.lua")
+local conf = include("conf.lua").player
 
 --local Inventory = include("inventory.lua")
 
@@ -9,13 +10,13 @@ plyClass.__index = plyClass
 
 --print(money, level, xp, prestige, prestigePoints)
 --make db get these as tables.
-function plyClass.new(ply, moneyData, lvlData, prestigeData)
+function plyClass.new(ply, plyData, prestigeData, inventoryData)
     local self = setmetatable({}, plyClass)
     self.ply = ply
-    self.Money = Money.new(moneyData.money)
-    self.Level = Level.new(lvlData.level, lvlData.xp)
+    self.Money = Money.new(plyData.money)
+    self.Level = Level.new(plyData.level, plyData.xp, conf.maxLevel or 80)
     self.Prestige = Prestige.new(prestigeData)
-    --self.InventorySys = Inventory.new()
+    --self.InventorySys = Inventory.new(inventoryData)
 
     return self
 end

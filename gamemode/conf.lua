@@ -1,5 +1,5 @@
 local conf = {
-    autoSaveTime = 30,
+    autoSaveTime = 60*3,
     player = {
         maxLevel = 80,
         growthFactor = 1

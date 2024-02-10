@@ -1,33 +1,47 @@
-local conf = include("conf.lua").player
 local Level = {}
 Level.__index = Level
 
-function Level.new(level, xp, maxLevel)
+function Level.new(level, xp, maxLevel, growth, basexp)
     local self = setmetatable({}, Level)
-    self.level = 1
-    self.xp = 0
-    self.maxLevel = maxLevel or conf.maxLevel or 200
-    self.maxXp = 100
+    self.level = level or 1
+    self.xp = xp or 0
+    self.maxLevel = maxLevel or 80
+    self.growth = growth or 1
+    self.basexp = basexp or 100
+
+    self:xpToNextLevel = -1
+    CalcNewMaxXp()
     return self
 end
 
 function Level:CalcNewMaxXp()
-    self.maxXp = baseXP * math.pow(conf.growthFactor, self.level - 1)
+    self.xpToNextLevel = self.basexp * math.pow(self.growth, self.level - 1)
 end
 
 function Level:addLevel(amount)
     amount = amount or 1
-    self.level = self.level + amount
+    if self.level + amount > self.maxLevel then
+        self.level = self.maxLevel
+    else
+        self.level = math.max(1, self.level + amount)
+    end
     self:CalcNewMaxXp()
 end
 
 function Level:AddXp(amount)
-    if self.xp + amount >= self.maxXp then
-        amount = (self.xp + amount) - self.maxXp
-        self:AddLevel()
-        self:AddXp(amount)
-    else
-        self.xp = self.xp + amount
+    while amount > 0 and self.level < self.maxLevel do
+        if self.xp + amount >= self.xpToNextLevel then
+            amount = (self.xp + amount) - self.xpToNextLevel
+            -- Level up and recalculate xpToNextLevel inside AddLevel
+            self:AddLevel()
+            if self.level == self.maxLevel then
+                self.xp = math.min(amount, self.xpToNextLevel)
+                break
+            end
+        else
+            self.xp = self.xp + amount
+            amount = 0
+        end
     end
 end
 
