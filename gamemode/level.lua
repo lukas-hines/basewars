@@ -53,6 +53,15 @@ function Level:GetXp()
     return self.xp
 end
 
+function Level:SetLevelSafe(num)
+    if num < 1 then print("[BW] cannot set level to a invalid number.") return end
+    self.level = num -1
+    self:CalcNewMaxXp()
+    self.xp = self.xpToNextLevel
+    self.level = num
+    self:CalcNewMaxXp()
+end
+
 function Level:SetLevel(num)
     self.level = num
 end
