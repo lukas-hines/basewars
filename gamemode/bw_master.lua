@@ -2,25 +2,21 @@ local PlyRepo = include("playerRepo.lua")
 local PlyClass = include("player.lua")
 local conf = include("conf.lua")
 
-PlyRepo.connect()
-
 local playerInsts = {}
 
-local function createPlayerInstance(ply)
-    if not IsValid(ply) or playerInsts[ply] then return end
+local function createPlayerInstance(ply)    
     PlayerRepo.LoadPlayerData(ply, 
         function(LoadedPlayer)
             LoadedPlayer.ply = ply
             playerInsts[ply] = LoadedPlayer
-        end)
+        end)    
 end
 
---make a save to database in playerRepo
 local function removePlayerInstance(ply)
-    local data = playerInsts[ply]
-    PlyRepo.SavePlayerData(data)
+    PlyRepo.SavePlayerData(playerInsts[ply], function()
+            playerInsts[ply] = nil
+        end)
 
-    playerInsts[ply] = nil
 end
 
 local function saveAllData(callBack)
@@ -31,7 +27,7 @@ local function saveAllData(callBack)
                 print("[BW] all player data hase been saved.")
             end)
         else
-            PlyRepo.SavePlayerData()
+            PlyRepo.SavePlayerData(playerInst)
         end
     end
 
@@ -49,8 +45,6 @@ concommand.Add("bw_prep_shutdown", function(ply, cmd, args)
     end)
 end)
 
---timer.Create("AutoSavePlayerData", conf.autoSaveTime, 0, saveAllData)
-
 hook.Add("PlayerInitialSpawn", "bw_masterPlayerInitSpawn", function(ply)
     createPlayerInstance(ply)
 end)
@@ -59,3 +53,6 @@ hook.Add("PlayerDisconnected", "bw_masterPlayerDisconnected", function(ply)
     removePlayerInstance(ply)
 end)
 
+timer.Create("AutoSavePlayerData", conf.autoSaveTime or 30, 0, saveAllData)
+
+PlyRepo.connect()
