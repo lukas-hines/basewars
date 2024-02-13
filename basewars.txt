@@ -1,8 +1,8 @@
 "basewars"
 {
 	"author_name"	"Lukas hines"
-	"author_email"	"johndoe@example.com"
-	"author_url" 	"http://www.example.com"
+	"author_email"	"lukas.a.hines@gmail.com"
+	"author_url" 	"https://github.com/lukas-hines"
 	"version"    	"0"
 	
 	"title"			"BaseWars"

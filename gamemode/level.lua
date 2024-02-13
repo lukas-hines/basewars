@@ -9,7 +9,7 @@ function Level.new(level, xp, maxLevel, growth, basexp)
     self.growth = growth or 1
     self.basexp = basexp or 100
 
-    self:xpToNextLevel = -1
+    self.xpToNextLevel = -1
     CalcNewMaxXp()
     return self
 end
