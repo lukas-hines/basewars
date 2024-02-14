@@ -14,8 +14,8 @@ if not PlayerRepoSingleton then
     PlayerRepo.db = mysqloo.connect(mysql.host, mysql.user, mysql.pass, "", mysql.port, mysql.sock)
     PlayerRepo.db:setAutoReconnect(true)
 
-    function PlayerRepo.initdb()
-        
+    function PlayerRepo.initdb(success, fail)
+        if success then success() end
     end
 
     function PlayerRepo.db:onConnected()
