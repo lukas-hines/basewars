@@ -41,6 +41,7 @@ concommand.Add("bw_prep_shutdown", function(ply, cmd, args)
     end)
 end)
 
+--i know this all looks bad i plab to make a command file some where.
 local initConfirmation = false
 concommand.Add("bw_init_db", function(ply, cmd, args)
     if IsValid(ply) and not ply:IsSuperAdmin() then
@@ -50,7 +51,35 @@ concommand.Add("bw_init_db", function(ply, cmd, args)
 
     if initConfirmation then 
         initConfirmation = false
-        print("kitaaa")
+        ply:PrintMessage(HUD_PRINTCONSOLE, "[BW] formating database..")
+
+        require("mysqloo")
+        local mysql = conf.mysqlDB
+
+        local db = mysqloo.connect(mysql.host, mysql.user, mysql.pass, "", mysql.port, mysql.sock)
+        
+        function db:onConnected()
+            local query = db:query("DROP DATABASE IF EXISTS basewars;CREATE DATABASE basewars;")
+            function query:onSuccess(data)
+                ply:PrintMessage(HUD_PRINTCONSOLE, "[BW] database formated.")
+
+                PlyRepo.initdb(function()
+                    ply:PrintMessage(HUD_PRINTCONSOLE, "[BW] database player tabled created.")
+                end,function()
+                    ply:PrintMessage(HUD_PRINTCONSOLE, "[BW] database player tabled failed to be created.")
+                end)
+
+                --add inits for other db as they are made.
+            end
+            function query:onError(err)
+                ply:PrintMessage(HUD_PRINTCONSOLE, "[BW] unable to format db. error:", err)
+            end
+            query:start()
+        end
+        function db:onConnectionFailed(err) 
+            ply:PrintMessage(HUD_PRINTCONSOLE, "[BW] (bw_init_db) can not connect to db. is your mysql server down? error:", err)
+        end
+        db:connect() 
         return
     end
     --i hate non monospaced fonts

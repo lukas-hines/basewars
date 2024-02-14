@@ -4,7 +4,7 @@ local conf = {
         maxLevel = 80,
         growthFactor = 1
     },
-    playerDB = {
+    mysqlDB = {
         host = "localhost",
         user = "basewars",
         pass = "password",
