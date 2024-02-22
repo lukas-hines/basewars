@@ -14,8 +14,82 @@ if not PlayerRepoSingleton then
     PlayerRepo.db = mysqloo.connect(mysql.host, mysql.user, mysql.pass, "", mysql.port, mysql.sock)
     PlayerRepo.db:setAutoReconnect(true)
 
+    local function initPlayerTable(success, fail)
+        local query = PlayerRepo.db:query([[CREATE TABLE player (
+            steamplayer_id VARCHAR(255) NOT NULL,
+            money INT DEFAULT 500,
+            level INT DEFAULT 1,
+            xp INT DEFAULT 0,
+            prestige_points INT DEFAULT 0,
+            PRIMARY KEY (steamplayer_id)
+        );]])
+        function query:onSuccess(data)
+            if success then success() end
+        end
+    
+        function query:onError(err)
+            if fail then fail() end
+        end
+
+        query:start()
+    end
+
+    --i need to study sql to make this use player db...
+    local function initPlayerInvitoryTable(success, fail)
+        local query = PlayerRepo.db:query([[
+            SELECT 1;
+        ]])
+        function query:onSuccess(data)
+            if success then success() end
+        end
+    
+        function query:onError(err)
+            print("[BW] failed to create PlayerInvitoryTable")
+            if fail then fail() end
+        end
+
+        query:start()
+    end
+
+    --i need to study sql to make this use player db...
+    local function initPlayerPrestigeTable(success, fail)
+        local query = PlayerRepo.db:query([[
+            SELECT 1;
+        ]])
+        function query:onSuccess(data)
+            if success then success() end
+        end
+    
+        function query:onError(err)
+            print("[BW] failed to create PrestigeTable")
+            if fail then fail() end
+        end
+
+        query:start()
+    end
+
     function PlayerRepo.initdb(success, fail)
-        if success then success() end
+        local totalOperations = 3
+        local completedOperations = 0
+        local hasFailed = false
+    
+        local function checkCompletion()
+            completedOperations = completedOperations + 1
+            if completedOperations == totalOperations and not hasFailed then
+                success()
+            end
+        end
+        
+        local function onFail()
+            if not hasFailed then
+                hasFailed = true
+                fail()
+            end
+        end
+
+        initPlayerTable        (function() checkCompletion() end, function() onFail() end)
+        initPlayerInvitoryTable(function() checkCompletion() end, function() onFail() end)
+        initPlayerPrestigeTable(function() checkCompletion() end, function() onFail() end)
     end
 
     function PlayerRepo.db:onConnected()
